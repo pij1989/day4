@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 
 public class IntegerReaderTest {
-    static final String FILE = "src\\test\\resources\\test_integers.txt";
+    static final String FILE = "..\\data\\integers.txt";
     IntegerReader integerReader;
 
     @BeforeMethod

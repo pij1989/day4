@@ -1,5 +1,6 @@
 package com.pozharsky.dmitri.service;
 
+import com.pozharsky.dmitri.comparator.IntegerComparator;
 import com.pozharsky.dmitri.entity.Element;
 import com.pozharsky.dmitri.entity.IntegerArray;
 import com.pozharsky.dmitri.entity.JaggedIntegerArray;
@@ -9,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class JaggedIntegerArrayService {
     private static final Logger logger = LogManager.getLogger(JaggedIntegerArrayService.class);
@@ -28,21 +30,10 @@ public class JaggedIntegerArrayService {
         sortByOrder(jaggedIntegerArray, array, order);
     }
 
-    private void bubleSortAsc(int[] array, JaggedIntegerArray jaggedIntegerArray) {
+    private void bubleSort(int[] array, JaggedIntegerArray jaggedIntegerArray, Comparator<Integer> comparator) {
         for (int i = array.length - 1; i > 0; i--) {
             for (int j = 0; j < i; j++) {
-                if (array[j] > array[j + 1]) {
-                    swap(array, j, j + 1);
-                    swap(jaggedIntegerArray, j, j + 1);
-                }
-            }
-        }
-    }
-
-    private void bubleSortDesc(int[] array, JaggedIntegerArray jaggedIntegerArray) {
-        for (int i = array.length - 1; i > 0; i--) {
-            for (int j = 0; j < i; j++) {
-                if (array[j] < array[j + 1]) {
+                if (comparator.compare(array[j], array[j + 1]) > 0) {
                     swap(array, j, j + 1);
                     swap(jaggedIntegerArray, j, j + 1);
                 }
@@ -51,13 +42,14 @@ public class JaggedIntegerArrayService {
     }
 
     private void sortByOrder(JaggedIntegerArray jaggedIntegerArray, int[] array, Order order) {
+        Comparator<Integer> comparator = new IntegerComparator();
         switch (order) {
             case ASCENDING: {
-                bubleSortAsc(array, jaggedIntegerArray);
+                bubleSort(array, jaggedIntegerArray, comparator);
                 break;
             }
             case DESCENDING: {
-                bubleSortDesc(array, jaggedIntegerArray);
+                bubleSort(array, jaggedIntegerArray, comparator.reversed());
                 break;
             }
             default: {
@@ -102,7 +94,7 @@ public class JaggedIntegerArrayService {
                 }
             }
         } catch (JaggedIntegerArrayException e) {
-            logger.fatal(e);
+            logger.fatal("Incorrect range of index: " + e);
             throw new RuntimeException();
         }
         return array;
