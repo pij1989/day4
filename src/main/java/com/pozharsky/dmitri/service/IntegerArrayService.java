@@ -5,27 +5,28 @@ import com.pozharsky.dmitri.exception.IntegerArrayException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
 public class IntegerArrayService {
     private static final Logger logger = LogManager.getLogger(IntegerArrayService.class);
 
-    public void quickSort(IntegerArray integerArray) {
+    public void quickSort(IntegerArray integerArray, Comparator<Integer> comparator) {
         int[] array = integerArray.getArray();
-        quickSort(array, 0, array.length - 1);
+        quickSort(array, 0, array.length - 1, comparator);
         setIntegerArray(integerArray, array);
     }
 
-    public void bubleSort(IntegerArray integerArray) {
+    public void bubleSort(IntegerArray integerArray, Comparator<Integer> comparator) {
         int[] array = integerArray.getArray();
-        bubleSort(array);
+        bubleSort(array, comparator);
         setIntegerArray(integerArray, array);
     }
 
-    public void mergeSort(IntegerArray integerArray) {
+    public void mergeSort(IntegerArray integerArray, Comparator<Integer> comparator) {
         int[] array = integerArray.getArray();
-        mergeSort(array, 0, array.length - 1);
+        mergeSort(array, 0, array.length - 1, comparator);
         setIntegerArray(integerArray, array);
     }
 
@@ -134,15 +135,15 @@ public class IntegerArrayService {
         return -(low + 1);  // key not found.
     }
 
-    private void mergeSort(int[] array, int start, int end) {
+    private void mergeSort(int[] array, int start, int end, Comparator<Integer> comparator) {
         if (end <= start) return;
         int middle = start + (end - start) / 2;
-        mergeSort(array, start, middle);
-        mergeSort(array, middle + 1, end);
-        merge(array, start, middle, end);
+        mergeSort(array, start, middle, comparator);
+        mergeSort(array, middle + 1, end, comparator);
+        merge(array, start, middle, end, comparator);
     }
 
-    private static void merge(int[] array, int start, int middle, int end) {
+    private static void merge(int[] array, int start, int middle, int end, Comparator<Integer> comparator) {
         int[] arrayBuffer = new int[array.length];
         int i = start;
         int j = middle + 1;
@@ -152,31 +153,31 @@ public class IntegerArrayService {
         for (int k = start; k <= end; k++) {
             if (i > middle) array[k] = arrayBuffer[j++];
             else if (j > end) array[k] = arrayBuffer[i++];
-            else if (arrayBuffer[j] < arrayBuffer[i]) array[k] = arrayBuffer[j++];
+            else if (comparator.compare(arrayBuffer[j], arrayBuffer[i]) < 0) array[k] = arrayBuffer[j++];
             else array[k] = arrayBuffer[i++];
         }
     }
 
-    private void bubleSort(int[] array) {
+    private void bubleSort(int[] array, Comparator<Integer> comparator) {
         for (int i = array.length - 1; i > 0; i--) {
             for (int j = 0; j < i; j++) {
-                if (array[j] > array[j + 1]) {
+                if (comparator.compare(array[j], array[j + 1]) > 0) {
                     swap(array, j, j + 1);
                 }
             }
         }
     }
 
-    private void quickSort(int[] array, int start, int end) {
+    private void quickSort(int[] array, int start, int end, Comparator<Integer> comparator) {
         int mid = start + (end - start) / 2;
         int middle = array[mid];
         int i = start;
         int j = end;
         while (i <= j) {
-            while (array[i] < middle) {
+            while (comparator.compare(array[i], middle) < 0) {
                 i++;
             }
-            while (middle < array[j]) {
+            while (comparator.compare(middle, array[j]) < 0) {
                 j--;
             }
             if (i <= j) {
@@ -186,10 +187,10 @@ public class IntegerArrayService {
             }
         }
         if (start < j) {
-            quickSort(array, start, j);
+            quickSort(array, start, j, comparator);
         }
         if (end > i) {
-            quickSort(array, i, end);
+            quickSort(array, i, end, comparator);
         }
     }
 
@@ -205,7 +206,7 @@ public class IntegerArrayService {
                 integerArray.setInteger(i, array[i]);
             }
         } catch (IntegerArrayException e) {
-            logger.error(e);
+            logger.error("Incorrect range of index: " + e);
         }
     }
 }
