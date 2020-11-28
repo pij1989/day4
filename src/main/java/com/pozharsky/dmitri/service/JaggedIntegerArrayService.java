@@ -1,7 +1,7 @@
 package com.pozharsky.dmitri.service;
 
 import com.pozharsky.dmitri.comparator.IntegerComparator;
-import com.pozharsky.dmitri.entity.Element;
+import com.pozharsky.dmitri.entity.Operation;
 import com.pozharsky.dmitri.entity.IntegerArray;
 import com.pozharsky.dmitri.entity.JaggedIntegerArray;
 import com.pozharsky.dmitri.entity.Order;
@@ -16,17 +16,17 @@ public class JaggedIntegerArrayService {
     private static final Logger logger = LogManager.getLogger(JaggedIntegerArrayService.class);
 
     public void bubleSortByMaxElementInLine(JaggedIntegerArray jaggedIntegerArray, Order order, IntegerArrayService integerArrayService) {
-        int[] array = defineArrayByElement(jaggedIntegerArray, integerArrayService, Element.MAX);
+        int[] array = defineArrayByElement(jaggedIntegerArray, integerArrayService, Operation.MAX);
         sortByOrder(jaggedIntegerArray, array, order);
     }
 
     public void bubleSortByMinElementInLine(JaggedIntegerArray jaggedIntegerArray, Order order, IntegerArrayService integerArrayService) {
-        int[] array = defineArrayByElement(jaggedIntegerArray, integerArrayService, Element.MIN);
+        int[] array = defineArrayByElement(jaggedIntegerArray, integerArrayService, Operation.MIN);
         sortByOrder(jaggedIntegerArray, array, order);
     }
 
     public void bubleSortBySumElementInLine(JaggedIntegerArray jaggedIntegerArray, Order order) {
-        int[] array = defineArrayByElement(jaggedIntegerArray, null, Element.SUM);
+        int[] array = defineArrayByElement(jaggedIntegerArray, null, Operation.SUM);
         sortByOrder(jaggedIntegerArray, array, order);
     }
 
@@ -60,11 +60,11 @@ public class JaggedIntegerArrayService {
         }
     }
 
-    private int[] defineArrayByElement(JaggedIntegerArray jaggedIntegerArray, IntegerArrayService integerArrayService, Element element) {
+    private int[] defineArrayByElement(JaggedIntegerArray jaggedIntegerArray, IntegerArrayService integerArrayService, Operation operation) {
         int size = jaggedIntegerArray.getSize();
         int[] array = new int[size];
         try {
-            switch (element) {
+            switch (operation) {
                 case SUM: {
                     for (int i = 0; i < size; i++) {
                         IntegerArray integerArray = jaggedIntegerArray.getIntegerArray(i);
@@ -88,7 +88,7 @@ public class JaggedIntegerArrayService {
                     break;
                 }
                 default: {
-                    String msg = "Unknown element value " + element;
+                    String msg = "Unknown element value " + operation;
                     logger.fatal(msg);
                     throw new IllegalStateException(msg);
                 }

@@ -1,5 +1,5 @@
 package com.pozharsky.dmitri.entity;
 
-public enum Element {
+public enum Operation {
     SUM, MAX, MIN
 }
